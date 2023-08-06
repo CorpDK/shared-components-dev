@@ -1,0 +1,26 @@
+name: shared-components-dev
+services:
+  bit-dev:
+    build:
+      context: ./bit
+      args:
+        BIT_VERSION: ${BIT_VERSION}
+        BIT_NODE_VERSION: ${BIT_NODE_VERSION}
+    image: corpdk/bit-dev:node_${BIT_NODE_VERSION}.bit_${BIT_VERSION}
+    container_name: bit-dev
+    ports:
+      - 3000:3000
+      - 3001:3001
+      - 3300:3300
+      - 3301:3301
+    restart: unless-stopped
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 0
+      net.ipv6.conf.default.disable_ipv6: 0
+    volumes:
+      - ./../:/code
+
+networks:
+  default:
+    external: true
+    name: local-infra-main-net
