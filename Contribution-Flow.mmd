@@ -1,0 +1,93 @@
+flowchart TB
+    A1(["Start"])
+    A2[/"Upstream Repository"/]
+    A3["Fork From Upstream"]
+    A4[/"Forked Repository"/]
+    A5["Create Feature Branch in Forked Repository"]
+    A6[/"Feature Branch"/]
+    X1(("T1"))
+
+    A1-->A2-->A3-->A4-->A5-->A6
+    A6-->B1
+    X1-->B1
+
+    subgraph "Work in Feature Branch"
+        B1["Make Changes"]
+        B2["Test in Local"]
+        B3["Commit"]
+        B4["Push to Branch"]
+
+        B1-->B2-->B3-->B4
+    end
+
+    A7{"Changes Pending?"}
+    X2(("T1"))
+    X5(("T2"))
+    X6(("T2"))
+    A8{"PR Already Raised?"}
+
+    X5-->A8
+    B4-->A7
+    A7-->|"Yes"|X2
+    A7-->|"No"|X6
+    A8-->|"Yes"|D1
+    A8-->|"No"|C1
+
+    subgraph "PR Preparation"
+        C1["Soft Tag Components"]
+        C2["Commit Changes"]
+        C3["Push Changes"]
+
+        C1-->C2-->C3
+    end
+
+    A9["Raise PR to Upstream"]
+
+    C3-->A9
+    A9-->D1
+
+    subgraph "Github Actions on PR Raised"
+        D1["Install & Configure bit"]
+        D2{"Check Workspace Issues"}
+        D3["Stop CI and Show Error"]
+        D4["Build Components"]
+        D5{"Build Success?"}
+
+        D1--> D2
+        D2-->|"No Issues"|D4
+        D4-->D5
+        D5-->|"No"|D3
+        D2-->|"On Issues"|D3
+    end
+
+    X3(("T1"))
+    X4(("T1"))
+    X7(("T3"))
+    X8(("T3"))
+    A10["Review by Maintainers"]
+    A11{"Changes Requested?"}
+    A12["Maintainer Merges PR"]
+
+    D5-->|"Yes"|A10
+    D3-->X3
+    A10-->A11
+    X7-->A12
+    A11-->|"Yes"|X4
+    A11-->|"No"|X8
+    A12-->E1
+
+    subgraph "Github Actions after PR Merge to main"
+        E1["Persist Tag"]
+        E2["Export"]
+        E3["Commit Back to Repo"]
+
+        E1-->E2-->E3
+    end
+
+    X9(("T4"))
+    X10(("T4"))
+    A13["Delete Feature Branch in Fork"]
+    A14["Sync Fork main"]
+
+    E3-->A13-->X10
+    X9-->A14-->A5
