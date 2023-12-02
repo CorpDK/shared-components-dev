@@ -8,6 +8,7 @@ services:
         BIT_NODE_VERSION: ${BIT_NODE_VERSION}
     image: corpdk/bit-dev:node_${BIT_NODE_VERSION}.bit_${BIT_VERSION}
     container_name: bit-dev
+    working_dir: ${PWD}/..
     ports:
       - 3000:3000
       - 3001:3001
@@ -18,7 +19,7 @@ services:
       net.ipv6.conf.all.disable_ipv6: 0
       net.ipv6.conf.default.disable_ipv6: 0
     volumes:
-      - ./../:/code
+      - ${PWD}/..:${PWD}/..:rw
 
 networks:
   default:
